@@ -1,0 +1,33 @@
+
+Note: Compatibility modes selected: ps lt ki a
+
+
+Circuit: * testing circuit
+
+binary raw file "/Users/eugenedann/Documents/Development/spyci/output/test_1.raw"
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+No. of Data Columns : 4  
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+tp1                                          0
+tp2                                          0
+v1#branch                                    0
+
+
+No. of Data Rows : 10012
+
+Total analysis time (seconds) = 0.012349
+
+Total elapsed time (seconds) = 0.016 
+
+Total DRAM available = 16384.000 MB.
+DRAM currently available =  574.797 MB.
+Maximum ngspice program size =    6.641 MB.
+Current ngspice program size =    6.641 MB.
+

@@ -1,0 +1,9 @@
+* Testing circuit
+V1 TP1 0 SIN(0 10 100k)
+
+R1 TP1 TP2 200
+C1 TP2 0 0.01u
+
+.tran 0.1u 1m
+
+.END
