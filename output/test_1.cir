@@ -1,9 +1,52 @@
-* Testing circuit
-V1 TP1 0 SIN(0 10 100k)
+* *-------------------------------Parameters--------------------------------------
+* .param fc=1Meg        ; Carrier frequency
+* .param Ac=1           ; Carrier amplitude
+* .param m=0.5          ; Modulation index
 
-R1 TP1 TP2 200
-C1 TP2 0 0.01u
+* .param af1f=3k        ; AF tone 1 frequency
+* .param af1a=1         ; AF tone 1 amplitude
+* .param af1p=0         ; AF tone 1 phase in degrees
 
-.tran 0.1u 1m
+* .param af2f=10k       ; AF tone 2 frequency
+* .param af2a=0.5       ; AF tone 2 amplitude
+* .param af2p=90        ; AF tone 2 phase in degrees
+
+* .param pi=3.14159265359
+
+* *--------------------------------Signals----------------------------------------
+
+* * Audio Frequency Composite Signal
+* BAF AFS 0 V = { af1a * sin(2*pi*af1f*(time) + af1p*pi/180) + af2a * sin(2*pi*af2f*(time) + af2p*pi/180) }
+* RAF AFS 0 50
+
+* * Carrier Only Signal (Unmodulated)
+* BRF RFC 0 V = { Ac * sin(2*pi*fc*(time)) }
+* RRFC RFC 0 50
+
+* * AM Modulated Signal (AF modulating Carrier)
+* BAM AMS 0 V = { Ac * (1 + m * ( af1a * sin(2*pi*af1f*(time) + af1p*pi/180) + af2a * sin(2*pi*af2f*(time) + af2p*pi/180))) * sin(2*pi*fc*(time)) }
+* RAM AMS 0 50
+
+V1 IN N999 SINE(0 10m 1000k) AC 1
+RT N999 0 50
+
+*-------------------------------Circuits----------------------------------------
+
+XT1 IN 0 TP1 0 RFTrans14
+C1 TP1 0 6.35n
+
+*-----------------------------Sub-Circuits--------------------------------------
+* 1:4 RF Transformer
+.SUBCKT RFTrans14 P+ P- S+ S- 
+L1 P+ P- 1u
+L2 S+ S- 4u
+K1 L1 L2 0.98
+.ENDS RFTrans14
+
+*--------------------------------Models-----------------------------------------
+
+*--------------------------Simulation Control-----------------------------------
+.tran 0.05u 1m
+.ac dec 500 1 100Meg
 
 .END
