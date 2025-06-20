@@ -1,32 +1,27 @@
-from lib import sim
+from lib.project import SpiceProject
+from lib.sim import Sim
 from lib.themes.theme import PlotTheme
 from lib.utils import metric_notation as mn
 
 import numpy as np
 
-sim_type = 'ac'
+project = SpiceProject('output', 'test.cir')
 
-sim = sim.SpiceProject('output', 'test.cir')
-sim.run()
+# === Transient Analysis ===
+project.sim = Sim.tran('0.1u', '1m', '0')
+project.run()
+project.read_raw()
 
-# caps = []
+project.clear_plots()
+project.add_plot('v(TP1)', name='TP1 - Transient')
+project.plot(title='TP1 - Time Domain')
 
-# for val in range(6300, 6400, 10):
-#     c = val*1e-12
-#     caps.append(f'{mn.tm(c)}')
+# === AC Analysis ===
+project = SpiceProject('output', 'test.cir')
+project.sim = Sim.ac('dec', 100, '1', '2Meg')
+project.run()
+project.read_raw()
 
-# for val in caps:
-#     sim.component('C1', val)
-#     sim.run()
-    
-# count = 1
-# for val in caps:
-#     print(f'Signal {count} C1 = {val}')
-#     count += 1
-
-sim.read_raw()
-
-# sim.add_plot('v(IN)', sim_type, 'Input AM Signal', subplot_id=1)
-sim.add_plot('v(TP1)', sim_type, 'Input TP1 Signal', subplot_id=2)
-
-sim.plot(log_x=True)
+project.clear_plots()
+project.add_plot('v(TP1)', name='TP1 - AC Sweep')
+project.plot(title='TP1 - Frequency Domain')
