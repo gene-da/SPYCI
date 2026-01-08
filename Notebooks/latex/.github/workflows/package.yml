@@ -1,0 +1,42 @@
+name: package
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: install make deps
+        run: |
+          sudo apt update
+          sudo apt install texlive-latex-extra
+
+      - name: make
+        run: make ctan
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: ctan-package
+          path: |
+            catppuccinpalette-ctan.zip
+
+      - name: Upload Build Artifacts for package providing the colors
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: catppuccinpalette.sty
+          path: |
+            build/unpacked/catppuccinpalette.sty
+
+      - name: Upload Build Artifacts for beamer color theme package
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: beamercolorthemecatppuccin.sty
+          path: |
+            build/unpacked/beamercolorthemecatppuccin.sty

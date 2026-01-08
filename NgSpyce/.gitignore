@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# NgSpice output files
+*.raw
+*.log
+*.out
+
+# VSCode config
+.vscode/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Python environment config
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS metadata
+.DS_Store
+
+# Spyce-specific temporary data (if used)
+plots/
+cache/

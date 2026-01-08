@@ -1,0 +1,16 @@
+Makefile
+TODO
+build/
+*zip
+
+.DS_Store
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.nav
+*.snm
+*.toc
+*.synctex.gz
+*_*.webp

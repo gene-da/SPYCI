@@ -1,0 +1,63 @@
+from NgSpyce.Editor.Elements.Nodal.nodal_element import NodalElement
+from NgSpyce.utilities import format_value as fv
+
+class BehavioralSource(NodalElement):
+    def __init__(
+        self,
+        name: str,
+        node_pos,
+        node_neg,
+        *,
+        expr_type: str,
+        expr: str,
+        tc1=None,
+        tc2=None,
+        temp=None,
+        dtemp=None,
+    ):
+        """
+        Behavioral voltage or current source (Bxxxx).
+
+        Args:
+            name (str): Element name, e.g. 'B1'
+            node_pos (str|int): Positive terminal
+            node_neg (str|int): Negative terminal
+            expr_type (str): 'v' or 'i' for voltage or current source
+            expr (str): Mathematical expression (ngspice-compatible)
+            tc1 (float|str, optional): First-order temperature coefficient
+            tc2 (float|str, optional): Second-order temperature coefficient
+            temp (float|str, optional): Absolute instance temperature
+            dtemp (float|str, optional): Temperature delta from circuit nominal
+        """
+        if expr_type.lower() not in ('v', 'i'):
+            raise ValueError("expr_type must be 'v' or 'i'")
+
+        param_expr = f"{expr_type.lower()}= {expr.strip()}"
+        super().__init__(name, [node_pos, node_neg], param_expr)
+
+        self.tc1 = fv(tc1) if tc1 else None
+        self.tc2 = fv(tc2) if tc2 else None
+        self.temp = fv(temp) if temp else None
+        self.dtemp = fv(dtemp) if dtemp else None
+
+    def get_line(self) -> str:
+        parts = [self.name] + self.nodes + [self.value]
+        if self.tc1:
+            parts.append(f"tc1={self.tc1}")
+        if self.tc2:
+            parts.append(f"tc2={self.tc2}")
+        if self.temp:
+            parts.append(f"temp={self.temp}")
+        if self.dtemp:
+            parts.append(f"dtemp={self.dtemp}")
+        return ' '.join(parts)
+    
+if __name__ == '__main__':
+    print(BehavioralSource("B1", 0, 1, expr_type="i", expr="cos(v(1))+sin(v(2))").get_line())
+    # B1 N000 N001 i= cos(v(1))+sin(v(2))
+    expr = "V(1) < {Vlow} ? {Vlow} : V(1) > {Vhigh} ? {Vhigh} : V(1)"
+    print(BehavioralSource("Bcl", 2, 0, expr_type="v", expr=expr).get_line())
+    # Bcl N002 N000 v= V(1) < {Vlow} ? {Vlow} : V(1) > {Vhigh} ? {Vhigh} : V(1)
+    pwl_expr = "pwl(v(A), 0,0, 33,10m, 100,33m, 200,50m)"
+    print(BehavioralSource("Bdio", 1, 0, expr_type="i", expr=pwl_expr).get_line())
+    # Bdio N001 N000 i= pwl(v(A), 0,0, 33,10m, 100,33m, 200,50m)
